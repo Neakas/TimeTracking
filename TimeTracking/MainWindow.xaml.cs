@@ -19,9 +19,6 @@ using Brushes = System.Windows.Media.Brushes;
 
 namespace TimeTracking
 {
-    /// <summary>
-    ///     Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : INotifyPropertyChanged
     {
         public static MainWindow CurrentInstance;
@@ -32,7 +29,7 @@ namespace TimeTracking
 
         private bool _newProjectPopupOpen;
 
-        public ApplicationShortCutManager AppShortCutManager;
+        public ApplicationShortCutManager AppShortCutManager, WindowShortCutManager;
 
         public SystemShortCutManager scm;
 
@@ -41,11 +38,11 @@ namespace TimeTracking
 
         public MainWindow()
         {
-            
+
             TaskbarIcon icon = new TaskbarIcon();
             icon.Icon = new Icon("favicon.ico");
             icon.DoubleClickCommand = new ShowAppCommand();
-            
+
             icon.ToolTipText = "Time-Tracking";
 
 
@@ -59,17 +56,18 @@ namespace TimeTracking
                 {
                     this.ShowInTaskbar = true;
                 }
-                    
-
-                //base.OnStateChanged(args);
             };
             CurrentInstance = this;
             InitializeComponent();
             AppShortCutManager = new ApplicationShortCutManager(tbProjectText);
+            WindowShortCutManager = new ApplicationShortCutManager(this);
+
             AppShortCutManager.AddItem(new ApplicationShortCutItem(Key.S, ModifierKeys.Control), OnSaveText);
+            WindowShortCutManager.AddItem(new ApplicationShortCutItem(Key.Escape, ModifierKeys.None), OnEscape);
+
             scm = new SystemShortCutManager(this);
-            scm.AddItem(new SystemShortCutItem(Key.Add,ModifierKeys.Control), OnOpen);
-           
+            scm.AddItem(new SystemShortCutItem(Key.Add, ModifierKeys.Control), OnOpen);
+
             SetupCalender();
         }
 
@@ -129,6 +127,11 @@ namespace TimeTracking
             }
         }
 
+        private void OnEscape(object sender, EventArgs eventArgs)
+        {
+            if (this.WindowState != WindowState.Minimized)
+                this.WindowState = WindowState.Minimized;
+        }
         private void SetupCalender()
         {
             mainCalenderOnDisplayDateChanged = OnDisplayDateChanged;
@@ -137,6 +140,7 @@ namespace TimeTracking
             MainCalender.SelectedDatesChanged += MainCalenderOnSelectedDatesChanged;
             MainCalender.DisplayDateChanged += mainCalenderOnDisplayDateChanged;
             MainCalender.SelectedDate = DateTime.Today;
+            SelectFirstEntry();
         }
 
         private EventHandler<CalendarDateChangedEventArgs> mainCalenderOnDisplayDateChanged;
@@ -170,16 +174,28 @@ namespace TimeTracking
 
             if (needRefresh) RefreshCalender();
         }
-
-
-        private void MainCalenderOnSelectedDatesChanged(object sender,SelectionChangedEventArgs selectionChangedEventArgs)
+        private void MainCalenderOnSelectedDatesChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
         {
-            var day = (DateTime) selectionChangedEventArgs.AddedItems[0];
+            var day = (DateTime)selectionChangedEventArgs.AddedItems[0];
             if (StateManager.CurrentSelectedDate.Month == day.Month && StateManager.CurrentSelectedDate.Year == day.Year)
             {
                 StateManager.CurrentSelectedDate = day;
+                SelectFirstEntry();
             }
-            
+
+        }
+
+        /// <summary>
+        /// Selektiert den ersten Zeiteintrag, sodass sofort der Erfassungstext angezeigt wird
+        /// </summary>
+        private void SelectFirstEntry()
+        {
+            // Parent-Node
+            var node = treeView.ItemContainerGenerator.Items[0] as TTKundeEntry;
+            if (node == null)
+                return;
+
+            StateManager.CurrentSelectedTTProjectEntry = node.TTProjectEntry.First();
         }
 
         private void ResetCalenderHighlight()
@@ -192,7 +208,7 @@ namespace TimeTracking
         {
             await Application.Current.Dispatcher.Invoke(async () =>
             {
-                var setting = new MetroDialogSettings {ColorScheme = MetroDialogColorScheme.Accented};
+                var setting = new MetroDialogSettings { ColorScheme = MetroDialogColorScheme.Accented };
 
                 await this.ShowMessageAsync(title, message, MessageDialogStyle.Affirmative, setting);
             });
@@ -240,7 +256,7 @@ namespace TimeTracking
                 StateManager.CurrentSelectedTTKundeEntry = (TTKundeEntry)e.NewValue;
                 popupProject.LinqToEntitiesProvider = new DBManager.LinqToEntititesResultsProviderProject(DBManager.GetProjects(StateManager.CurrentInstance.CurrentSelectedTTKundeEntry).ToList());
                 StateManager.CurrentSelectedTTProjectEntry = null;
-                
+
             }
         }
     }
