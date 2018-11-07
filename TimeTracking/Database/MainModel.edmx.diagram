@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="0b627f3467f44e3f8dddfd2408acfe14" Name="Diagram1" ZoomLevel="86">
+        <EntityTypeShape EntityType="MSUtilityDBModel.TTDates" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MSUtilityDBModel.TTEntryData" Width="1.5" PointX="6.875" PointY="2.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="MSUtilityDBModel.TTKunde" Width="1.5" PointX="2.625" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MSUtilityDBModel.TTKundeEntry" Width="1.5" PointX="2.625" PointY="2.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="MSUtilityDBModel.TTProject" Width="1.5" PointX="4.625" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MSUtilityDBModel.TTProjectEntry" Width="1.5" PointX="4.625" PointY="2.5" IsExpanded="true" />
+        <AssociationConnector Association="MSUtilityDBModel.FK_TTKundeEntry_TTDates" />
+        <AssociationConnector Association="MSUtilityDBModel.FK_TTKundeEntry_TTKunde" />
+        <AssociationConnector Association="MSUtilityDBModel.FK_TTProjectEntry_TTKundeEntry" />
+        <AssociationConnector Association="MSUtilityDBModel.FK_TTProjectEntry_TTProject" />
+        <AssociationConnector Association="MSUtilityDBModel.FK_TTEntryData_TTProjectEntry" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

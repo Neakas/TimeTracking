@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/TimeTracking/v15/Server/sqlite3
+/packages
+/TimeTracking/bin/Debug
+/TimeTracking/obj/Debug
+/TimeTracking/FsCalendar.dll

@@ -1,0 +1,377 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="MSUtilityDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="TTDates">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Day" Type="date" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TTEntryData">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProjectEntryId" Type="int" Nullable="false" />
+          <Property Name="Header" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TTKunde">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Kunde" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TTKundeEntry">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="KundeID" Type="int" Nullable="false" />
+          <Property Name="DateID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TTProject">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="KundeId" Type="int" Nullable="false" />
+          <Property Name="Project" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="iksProjectID" Type="int" />
+        </EntityType>
+        <EntityType Name="TTProjectEntry">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="KundeEntryId" Type="int" Nullable="false" />
+          <Property Name="ProjectId" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_TTEntryData_TTProjectEntry">
+          <End Role="TTProjectEntry" Type="Self.TTProjectEntry" Multiplicity="1" />
+          <End Role="TTEntryData" Type="Self.TTEntryData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TTProjectEntry">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TTEntryData">
+              <PropertyRef Name="ProjectEntryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TTKundeEntry_TTDates">
+          <End Role="TTDates" Type="Self.TTDates" Multiplicity="1" />
+          <End Role="TTKundeEntry" Type="Self.TTKundeEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TTDates">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="TTKundeEntry">
+              <PropertyRef Name="DateID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TTKundeEntry_TTKunde">
+          <End Role="TTKunde" Type="Self.TTKunde" Multiplicity="1" />
+          <End Role="TTKundeEntry" Type="Self.TTKundeEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TTKunde">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TTKundeEntry">
+              <PropertyRef Name="KundeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TTProjectEntry_TTKundeEntry">
+          <End Role="TTKundeEntry" Type="Self.TTKundeEntry" Multiplicity="1" />
+          <End Role="TTProjectEntry" Type="Self.TTProjectEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TTKundeEntry">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="TTProjectEntry">
+              <PropertyRef Name="KundeEntryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TTProjectEntry_TTProject">
+          <End Role="TTProject" Type="Self.TTProject" Multiplicity="1" />
+          <End Role="TTProjectEntry" Type="Self.TTProjectEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TTProject">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TTProjectEntry">
+              <PropertyRef Name="ProjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="MSUtilityDBModelStoreContainer">
+          <EntitySet Name="TTDates" EntityType="Self.TTDates" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TTEntryData" EntityType="Self.TTEntryData" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TTKunde" EntityType="Self.TTKunde" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TTKundeEntry" EntityType="Self.TTKundeEntry" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TTProject" EntityType="Self.TTProject" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TTProjectEntry" EntityType="Self.TTProjectEntry" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_TTEntryData_TTProjectEntry" Association="Self.FK_TTEntryData_TTProjectEntry">
+            <End Role="TTProjectEntry" EntitySet="TTProjectEntry" />
+            <End Role="TTEntryData" EntitySet="TTEntryData" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TTKundeEntry_TTDates" Association="Self.FK_TTKundeEntry_TTDates">
+            <End Role="TTDates" EntitySet="TTDates" />
+            <End Role="TTKundeEntry" EntitySet="TTKundeEntry" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TTKundeEntry_TTKunde" Association="Self.FK_TTKundeEntry_TTKunde">
+            <End Role="TTKunde" EntitySet="TTKunde" />
+            <End Role="TTKundeEntry" EntitySet="TTKundeEntry" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TTProjectEntry_TTKundeEntry" Association="Self.FK_TTProjectEntry_TTKundeEntry">
+            <End Role="TTKundeEntry" EntitySet="TTKundeEntry" />
+            <End Role="TTProjectEntry" EntitySet="TTProjectEntry" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TTProjectEntry_TTProject" Association="Self.FK_TTProjectEntry_TTProject">
+            <End Role="TTProject" EntitySet="TTProject" />
+            <End Role="TTProjectEntry" EntitySet="TTProjectEntry" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="MSUtilityDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="TTDates">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Day" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="TTKundeEntry" Relationship="MSUtilityDBModel.FK_TTKundeEntry_TTDates" FromRole="TTDates" ToRole="TTKundeEntry" />
+        </EntityType>
+        <EntityType Name="TTEntryData">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectEntryId" Type="Int32" Nullable="false" />
+          <Property Name="Header" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="TTProjectEntry" Relationship="MSUtilityDBModel.FK_TTEntryData_TTProjectEntry" FromRole="TTEntryData" ToRole="TTProjectEntry" />
+        </EntityType>
+        <EntityType Name="TTKunde">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Kunde" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="TTKundeEntry" Relationship="MSUtilityDBModel.FK_TTKundeEntry_TTKunde" FromRole="TTKunde" ToRole="TTKundeEntry" />
+        </EntityType>
+        <EntityType Name="TTKundeEntry">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="KundeID" Type="Int32" Nullable="false" />
+          <Property Name="DateID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="TTDates" Relationship="MSUtilityDBModel.FK_TTKundeEntry_TTDates" FromRole="TTKundeEntry" ToRole="TTDates" />
+          <NavigationProperty Name="TTKunde" Relationship="MSUtilityDBModel.FK_TTKundeEntry_TTKunde" FromRole="TTKundeEntry" ToRole="TTKunde" />
+          <NavigationProperty Name="TTProjectEntry" Relationship="MSUtilityDBModel.FK_TTProjectEntry_TTKundeEntry" FromRole="TTKundeEntry" ToRole="TTProjectEntry" />
+        </EntityType>
+        <EntityType Name="TTProject">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="KundeId" Type="Int32" Nullable="false" />
+          <Property Name="Project" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="TTProjectEntry" Relationship="MSUtilityDBModel.FK_TTProjectEntry_TTProject" FromRole="TTProject" ToRole="TTProjectEntry" />
+          <Property Name="iksProjectID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="TTProjectEntry">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="KundeEntryId" Type="Int32" Nullable="false" />
+          <Property Name="ProjectId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="TTKundeEntry" Relationship="MSUtilityDBModel.FK_TTProjectEntry_TTKundeEntry" FromRole="TTProjectEntry" ToRole="TTKundeEntry" />
+          <NavigationProperty Name="TTProject" Relationship="MSUtilityDBModel.FK_TTProjectEntry_TTProject" FromRole="TTProjectEntry" ToRole="TTProject" />
+          <NavigationProperty Name="TTEntryData" Relationship="MSUtilityDBModel.FK_TTEntryData_TTProjectEntry" FromRole="TTProjectEntry" ToRole="TTEntryData" />
+        </EntityType>
+        <EntityContainer Name="MSUtilityDBEntities" annotation:LazyLoadingEnabled="false">
+          <EntitySet Name="TTDates" EntityType="Self.TTDates" />
+          <EntitySet Name="TTEntryData" EntityType="Self.TTEntryData" />
+          <EntitySet Name="TTKunde" EntityType="Self.TTKunde" />
+          <EntitySet Name="TTKundeEntry" EntityType="Self.TTKundeEntry" />
+          <EntitySet Name="TTProject" EntityType="Self.TTProject" />
+          <EntitySet Name="TTProjectEntry" EntityType="Self.TTProjectEntry" />
+          <AssociationSet Name="FK_TTKundeEntry_TTDates" Association="MSUtilityDBModel.FK_TTKundeEntry_TTDates">
+            <End Role="TTDates" EntitySet="TTDates" />
+            <End Role="TTKundeEntry" EntitySet="TTKundeEntry" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TTKundeEntry_TTKunde" Association="MSUtilityDBModel.FK_TTKundeEntry_TTKunde">
+            <End Role="TTKunde" EntitySet="TTKunde" />
+            <End Role="TTKundeEntry" EntitySet="TTKundeEntry" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TTProjectEntry_TTKundeEntry" Association="MSUtilityDBModel.FK_TTProjectEntry_TTKundeEntry">
+            <End Role="TTKundeEntry" EntitySet="TTKundeEntry" />
+            <End Role="TTProjectEntry" EntitySet="TTProjectEntry" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TTProjectEntry_TTProject" Association="MSUtilityDBModel.FK_TTProjectEntry_TTProject">
+            <End Role="TTProject" EntitySet="TTProject" />
+            <End Role="TTProjectEntry" EntitySet="TTProjectEntry" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TTEntryData_TTProjectEntry" Association="MSUtilityDBModel.FK_TTEntryData_TTProjectEntry">
+            <End Role="TTProjectEntry" EntitySet="TTProjectEntry" />
+            <End Role="TTEntryData" EntitySet="TTEntryData" />
+          </AssociationSet>
+        </EntityContainer>
+        <Association Name="FK_TTKundeEntry_TTDates">
+          <End Type="MSUtilityDBModel.TTDates" Role="TTDates" Multiplicity="1" />
+          <End Type="MSUtilityDBModel.TTKundeEntry" Role="TTKundeEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TTDates">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="TTKundeEntry">
+              <PropertyRef Name="DateID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TTKundeEntry_TTKunde">
+          <End Type="MSUtilityDBModel.TTKunde" Role="TTKunde" Multiplicity="1" />
+          <End Type="MSUtilityDBModel.TTKundeEntry" Role="TTKundeEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TTKunde">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TTKundeEntry">
+              <PropertyRef Name="KundeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TTProjectEntry_TTKundeEntry">
+          <End Type="MSUtilityDBModel.TTKundeEntry" Role="TTKundeEntry" Multiplicity="1" />
+          <End Type="MSUtilityDBModel.TTProjectEntry" Role="TTProjectEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TTKundeEntry">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="TTProjectEntry">
+              <PropertyRef Name="KundeEntryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TTProjectEntry_TTProject">
+          <End Type="MSUtilityDBModel.TTProject" Role="TTProject" Multiplicity="1" />
+          <End Type="MSUtilityDBModel.TTProjectEntry" Role="TTProjectEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TTProject">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TTProjectEntry">
+              <PropertyRef Name="ProjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TTEntryData_TTProjectEntry">
+          <End Type="MSUtilityDBModel.TTProjectEntry" Role="TTProjectEntry" Multiplicity="1" />
+          <End Type="MSUtilityDBModel.TTEntryData" Role="TTEntryData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TTProjectEntry">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TTEntryData">
+              <PropertyRef Name="ProjectEntryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="MSUtilityDBModelStoreContainer" CdmEntityContainer="MSUtilityDBEntities">
+          <EntitySetMapping Name="TTDates">
+            <EntityTypeMapping TypeName="MSUtilityDBModel.TTDates">
+              <MappingFragment StoreEntitySet="TTDates">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Day" ColumnName="Day" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TTEntryData">
+            <EntityTypeMapping TypeName="MSUtilityDBModel.TTEntryData">
+              <MappingFragment StoreEntitySet="TTEntryData">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ProjectEntryId" ColumnName="ProjectEntryId" />
+                <ScalarProperty Name="Header" ColumnName="Header" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TTKunde">
+            <EntityTypeMapping TypeName="MSUtilityDBModel.TTKunde">
+              <MappingFragment StoreEntitySet="TTKunde">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Kunde" ColumnName="Kunde" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TTKundeEntry">
+            <EntityTypeMapping TypeName="MSUtilityDBModel.TTKundeEntry">
+              <MappingFragment StoreEntitySet="TTKundeEntry">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="KundeID" ColumnName="KundeID" />
+                <ScalarProperty Name="DateID" ColumnName="DateID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TTProject">
+            <EntityTypeMapping TypeName="MSUtilityDBModel.TTProject">
+              <MappingFragment StoreEntitySet="TTProject">
+                <ScalarProperty Name="iksProjectID" ColumnName="iksProjectID" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="KundeId" ColumnName="KundeId" />
+                <ScalarProperty Name="Project" ColumnName="Project" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TTProjectEntry">
+            <EntityTypeMapping TypeName="MSUtilityDBModel.TTProjectEntry">
+              <MappingFragment StoreEntitySet="TTProjectEntry">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="KundeEntryId" ColumnName="KundeEntryId" />
+                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
