@@ -234,6 +234,10 @@
       <DependentUpon>MainModel.edmx</DependentUpon>
       <LastGenOutput>MainModel.cs</LastGenOutput>
     </Content>
+    <Content Include="Stuff\DB-Script.sql" />
+    <Content Include="Stuff\Intellibox.dll" />
+    <Content Include="Stuff\MSUtilityLib.Base.dll" />
+    <Content Include="Stuff\MSUtilityLib.EntityFramework.dll" />
     <Resource Include="favicon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
