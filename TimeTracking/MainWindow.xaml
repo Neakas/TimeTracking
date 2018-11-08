@@ -7,6 +7,7 @@
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:mahicon="clr-namespace:MahApps;assembly=MahApps.Metro.IconPacks"
         xmlns:fs="clr-namespace:FsControls;assembly=FsCalendar"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:ui="clr-namespace:TimeTracking.UI"
         xmlns:Conv="clr-namespace:MSUtilityLib.Base.WPF.Converter;assembly=MSUtilityLib.Base"
@@ -21,7 +22,8 @@
         </Grid.ColumnDefinitions>
         <DockPanel LastChildFill="True" Grid.Column="0">
             <fs:FsCalendar DockPanel.Dock="Top" Name="MainCalender" HorizontalAlignment="Left" VerticalAlignment="Top"></fs:FsCalendar>
-            <Button DockPanel.Dock="Top" Name="btNewKunde"  Content="{iconPacks:Material Plus}" Click="Button_Click"></Button>
+            <Button DockPanel.Dock="Top" Name="btExport"  Content="{iconPacks:Material Export}" Click="ButtonExport_Click" ToolTip="Excel-Export des aktuell selektierten Monats"/>
+            <Button DockPanel.Dock="Top" Name="btNewKunde"  Content="{iconPacks:Material Plus}" Click="ButtonNewKunde_Click" ToolTip="Neuer Kunde"/>
             <TreeView DockPanel.Dock="Top" Name="treeView" ItemsSource="{Binding ElementName=_this, Path=StateManager.CurrentSelectedTTDate.TTKundeEntry}" SelectedItemChanged="TreeView_OnSelectedItemChanged">
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="{x:Type TreeViewItem}">
@@ -83,6 +85,7 @@
             </DockPanel>
             
         </Grid>
+        <xctk:BusyIndicator Name="xctkbiBusyIndicator" Grid.ColumnSpan="2" IsBusy="{Binding ShowBusyIndicator, ElementName=_this}" BusyContent="Bitte kurz warten ..."/>
     </Grid>
 </mah:MetroWindow>
 

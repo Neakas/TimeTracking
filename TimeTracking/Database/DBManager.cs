@@ -25,6 +25,21 @@ namespace TimeTracking.Database
             }
         }
 
+        public static List<TTDates> GetDateDataFromDateRange(DateTime from, DateTime to)
+        {
+            using (var context = new MSUtilityDBEntities())
+            {
+                var result = context.TTDates
+                    .Include("TTKundeEntry")
+                    .Include("TTKundeEntry.TTKunde")
+                    .Include("TTKundeEntry.TTProjectEntry")
+                    .Include("TTKundeEntry.TTProjectEntry.TTProject")
+                    .Include("TTKundeEntry.TTProjectEntry.TTEntryData").Where(x => x.Day >= from && x.Day <= to)
+                    .ToList();
+                return result;
+            }
+        }
+
         public static List<DateTime> GetCalenderEntries()
         {
             using (var context = new MSUtilityDBEntities())

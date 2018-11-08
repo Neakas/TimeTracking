@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Entity;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Hardcodet.Wpf.TaskbarNotification;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Win32;
 using MSUtilityLib.Base.WPF.GlobalShortCut;
 using TimeTracking.Database;
 using TimeTracking.Logic;
@@ -36,13 +38,29 @@ namespace TimeTracking
         public StateManager StateManager { get; set; } = new StateManager();
         public WindowState LastState;
 
+        #region ShowBusyIndicator Property
+        private bool _showBusyIndicator;
+        public bool ShowBusyIndicator
+        {
+            get => _showBusyIndicator; 
+            set
+            {
+                if (_showBusyIndicator == value)
+                    return;
+
+                _showBusyIndicator = value; 
+                OnPropertyChanged();
+            }
+        }
+        #endregion ShowBusyIndicator Property
+
         public MainWindow()
         {
-
+            
             TaskbarIcon icon = new TaskbarIcon();
             icon.Icon = new Icon("favicon.ico");
             icon.DoubleClickCommand = new ShowAppCommand();
-
+            
             icon.ToolTipText = "Time-Tracking";
 
 
@@ -66,8 +84,8 @@ namespace TimeTracking
             WindowShortCutManager.AddItem(new ApplicationShortCutItem(Key.Escape, ModifierKeys.None), OnEscape);
 
             scm = new SystemShortCutManager(this);
-            scm.AddItem(new SystemShortCutItem(Key.Add, ModifierKeys.Control), OnOpen);
-
+            scm.AddItem(new SystemShortCutItem(Key.Add,ModifierKeys.Control), OnOpen);
+           
             SetupCalender();
         }
 
@@ -174,15 +192,15 @@ namespace TimeTracking
 
             if (needRefresh) RefreshCalender();
         }
-        private void MainCalenderOnSelectedDatesChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
+        private void MainCalenderOnSelectedDatesChanged(object sender,SelectionChangedEventArgs selectionChangedEventArgs)
         {
-            var day = (DateTime)selectionChangedEventArgs.AddedItems[0];
+            var day = (DateTime) selectionChangedEventArgs.AddedItems[0];
             if (StateManager.CurrentSelectedDate.Month == day.Month && StateManager.CurrentSelectedDate.Year == day.Year)
             {
                 StateManager.CurrentSelectedDate = day;
                 SelectFirstEntry();
             }
-
+            
         }
 
         /// <summary>
@@ -191,8 +209,9 @@ namespace TimeTracking
         private void SelectFirstEntry()
         {
             // Parent-Node
-            var node = treeView.ItemContainerGenerator.Items[0] as TTKundeEntry;
-            if (node == null)
+            if (treeView.ItemContainerGenerator.Items.Count == 0)
+                return;
+                if (!(treeView.ItemContainerGenerator.Items[0] is TTKundeEntry node))
                 return;
 
             StateManager.CurrentSelectedTTProjectEntry = node.TTProjectEntry.First();
@@ -208,20 +227,48 @@ namespace TimeTracking
         {
             await Application.Current.Dispatcher.Invoke(async () =>
             {
-                var setting = new MetroDialogSettings { ColorScheme = MetroDialogColorScheme.Accented };
+                var setting = new MetroDialogSettings {ColorScheme = MetroDialogColorScheme.Accented};
 
                 await this.ShowMessageAsync(title, message, MessageDialogStyle.Affirmative, setting);
             });
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ButtonNewKunde_Click(object sender, RoutedEventArgs e) => NewKundePopupOpen = true;
+
+        private void ButtonExport_Click(object sender, RoutedEventArgs e)
         {
-            NewKundePopupOpen = true;
+            ShowBusyIndicator = true; // schon hier, wegen SaveFileDialog, der dafür sorgt, dass das UI direkt refresht wird
+
+            //JL: int year = MainCalender.DisplayDate.Year, month = MainCalender.DisplayDate.Month;
+            int year = StateManager.CurrentSelectedDate.Year, month = StateManager.CurrentSelectedDate.Month;
+
+            var sfd = new SaveFileDialog
+            {
+                Filter = "Excel-Datei|*.xlsx",
+                FileName = $"TimeTracking_Export_{year}_{month:00}.xlsx"
+            };
+
+            if (sfd.ShowDialog(this) != true)
+            {
+                ShowBusyIndicator = false;
+                return;
+            }
+
+            #region Export-Logic with BackgroundWorker
+            var bw = new BackgroundWorker();
+
+            bw.DoWork += (obj, args) =>
+                ExcelHelper.ExportTimeEntries(
+                    month, 
+                    year, 
+                    ExcelExportOptions.SaveAndOpen(new FileInfo(sfd.FileName)));
+
+            bw.RunWorkerCompleted += (obj, args) => ShowBusyIndicator = false;
+
+            bw.RunWorkerAsync();
+            #endregion Export-Logic with BackgroundWorker
         }
 
         public async Task<bool> ShowGlobalYesno(string title, string message)
@@ -256,7 +303,7 @@ namespace TimeTracking
                 StateManager.CurrentSelectedTTKundeEntry = (TTKundeEntry)e.NewValue;
                 popupProject.LinqToEntitiesProvider = new DBManager.LinqToEntititesResultsProviderProject(DBManager.GetProjects(StateManager.CurrentInstance.CurrentSelectedTTKundeEntry).ToList());
                 StateManager.CurrentSelectedTTProjectEntry = null;
-
+                
             }
         }
     }
