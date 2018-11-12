@@ -13,8 +13,14 @@
         xmlns:Conv="clr-namespace:MSUtilityLib.Base.WPF.Converter;assembly=MSUtilityLib.Base"
         xmlns:database="clr-namespace:TimeTracking.Database"
         xmlns:logic="clr-namespace:TimeTracking.Logic"
+        xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         mc:Ignorable="d"
         Title="TimeTracking" Height="450" Width="800" Name="_this"  WindowState="Normal" ResizeMode="CanMinimize">
+
+    <mah:MetroWindow.Resources>
+        <xcad:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </mah:MetroWindow.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -85,7 +91,15 @@
             </DockPanel>
             
         </Grid>
-        <xctk:BusyIndicator Name="xctkbiBusyIndicator" Grid.ColumnSpan="2" IsBusy="{Binding ShowBusyIndicator, ElementName=_this}" BusyContent="Bitte kurz warten ..."/>
+        <!--<xctk:BusyIndicator Name="xctkbiBusyIndicator" Grid.ColumnSpan="2" IsBusy="{Binding ShowBusyIndicator, ElementName=_this}" BusyContent="Bitte kurz warten ..."/>-->
+
+        <Grid Name="gridBusyIndicator"  Grid.ColumnSpan="2" Visibility="Hidden">
+            <Rectangle Fill="Black" Opacity=".725" Visibility="{Binding ShowBusyIndicator, ElementName=_this, Converter={StaticResource BoolToVisibilityConverter}}"/>
+            <Border Grid.ColumnSpan="2" BorderThickness="0,1.5,0,1.5" BorderBrush="White" Margin="0,150,0,150" Visibility="{Binding ShowBusyIndicator, ElementName=_this, Converter={StaticResource BoolToVisibilityConverter}}">
+                <Rectangle Fill="Black" Opacity=".75"/>
+            </Border>
+            <mah:ProgressRing IsActive="{Binding ShowBusyIndicator, ElementName=_this}" Foreground="White"/>
+        </Grid>
     </Grid>
 </mah:MetroWindow>
 
