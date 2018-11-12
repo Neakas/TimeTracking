@@ -39,16 +39,17 @@ namespace TimeTracking
         public WindowState LastState;
 
         #region ShowBusyIndicator Property
-        private bool _showBusyIndicator;
+        private bool _showBusyIndicator = false;
+
         public bool ShowBusyIndicator
         {
-            get => _showBusyIndicator; 
+            get => _showBusyIndicator;
             set
             {
                 if (_showBusyIndicator == value)
                     return;
 
-                _showBusyIndicator = value; 
+                _showBusyIndicator = value;
                 OnPropertyChanged();
             }
         }
@@ -76,6 +77,11 @@ namespace TimeTracking
             };
             CurrentInstance = this;
             InitializeComponent();
+
+            // REM - im Designer auf False, damit es beim Designen nicht stört, zur Laufzeit werden
+            // die Komponenten per Binding richtig auf sichtbar/unsichtbar bzw. aktiv/inaktiv gesetzt
+            gridBusyIndicator.Visibility = Visibility.Visible;
+
             AppShortCutManager = new ApplicationShortCutManager(tbProjectText);
             WindowShortCutManager = new ApplicationShortCutManager(this);
 
