@@ -56,7 +56,7 @@ namespace TimeTracking
 
         public MainWindow()
         {
-            
+            //TOLLES KOMMENTAR
             TaskbarIcon icon = new TaskbarIcon();
             icon.Icon = new Icon("favicon.ico");
             icon.DoubleClickCommand = new ShowAppCommand();
